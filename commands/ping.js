@@ -1,10 +1,10 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = { // Sets Command Name and Descripton (Like a meta data header, no function yet!)
-	data: new SlashCommandBuilder() 
+module.exports = {
+	data: new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription('Replies with Pong!'),
-	async execute(interaction) {  // Getting there, This just liatiens for an an interaction (Looking out if anyone toyes /ping, then reapies with fter command is entred 'Pong'.
+	async execute(interaction) {
 		await interaction.reply('Pong!');
 	},
 };
