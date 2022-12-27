@@ -3,8 +3,9 @@ const fs = require('node:fs'); // Reads the commands directory and identify the 
 const path = require('node:path'); // Helps construct paths to access files and directories. 
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');// Collection is used to store and efficiently retrieve commands for execution
 const { token } = require('./config.json');  // pulls token form another file for security
-const prefix = '/'; // Sets prefix bot used to pick up commands
 
+
+// Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
@@ -17,7 +18,8 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-client.once(Events.ClientReady, () => {
+// When the client is ready, run this code (only once)
+client.once(Events.ClientReady, () => { 
 	console.log('Ready!');
 });
 
@@ -40,4 +42,22 @@ client.on(Events.InteractionCreate, async interaction => { // Listening for user
  We use 'c' for the event parameter to keep it separate from the already defined 'client'
 Sets bots activity status under Discord name
 */
+
+
+// Adds events responces 
+
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+
+for (const file of eventFiles) {
+	const filePath = path.join(eventsPath, file);
+	const event = require(filePath);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args));
+	}
+}
+
+// Log in to Discord with your client's token
 client.login(token);
